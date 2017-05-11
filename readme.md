@@ -1,5 +1,10 @@
-Python demonstration that shows how to collect letters frequency
+Python demo that shows langauge basics
 
-How to use:
+
+To collect letters frequency:
 python3 demo.py
+
+To break "Caesar cipher":
+python3 encrypt.py hhgttg.txt hhgttg_enc.txt
+python3 decrypt.py alice.txt hhgttg_enc.txt hhgttg_decr.txt
 

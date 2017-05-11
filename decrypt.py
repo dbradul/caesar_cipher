@@ -1,6 +1,5 @@
 import string
 import sys
-from collect_stats import get_stats
 
 #------------------------------------------------------------
 def make_mapping(dict, dict_ref):
@@ -8,6 +7,14 @@ def make_mapping(dict, dict_ref):
                                       sorted(dict_ref, reverse=True, key=dict_ref.get))}
     return decode_map
 
+#------------------------------------------------------------
+def get_stats(text):
+    stats = {c:0 for c in string.ascii_lowercase}
+ 
+    for c in text:
+        if c in stats:
+            stats[c] += 1
+    return stats
 
 #------------------------------------------------------------
 def decode(text, decode_map):
