@@ -13,11 +13,11 @@ python3 encrypt.py <input> <output> <offset>
 ```
 - `input`: input filename for a file to be encrypted
 - `output`: output file name fo encrypted file
-- `offset`: offset to use for encryption
+- `offset`: offset used for encryption
 
 Example:
 ```
-python3 encrypt.py hhgttg.txt hhgttg_enc.txt
+python3 encrypt.py hhgttg.txt hhgttg_enc.txt 99
 ```
 
 
