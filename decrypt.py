@@ -2,72 +2,96 @@ import string
 import sys
 
 #------------------------------------------------------------
-def make_mapping(dict, dict_ref):
-    decode_map = {l:r for l, r in zip(sorted(dict,     reverse=True, key=dict.get),
-                                      sorted(dict_ref, reverse=True, key=dict_ref.get))}
-    return decode_map
+# Manually supported dict. for improper recognized symbols
+# Holds relation decoded -> actual symbol
+exceptions = {
+    'h': 'n',
+    'f': 'y',
+    # 'k':'v',
+    # 'm':'w',
+    # 'c':'m',
+    # 'w':'c',
+    # 'z':'q',
+    # '{':'v'
+}
+
+#------------------------------------------------------------
+def map_dicts_by_values(d1, d2):
+    '''
+    Maps 2 dicts according to their values
+    :param d1:
+    :param d2:
+    :return: Keys of mapped dicts
+    '''
+    mapped_keys = {l:r for l, r in zip(sorted(d1, key=d1.get),
+                                       sorted(d2, key=d2.get))}
+    return mapped_keys
 
 #------------------------------------------------------------
 def get_stats(text):
+    '''
+    Creates frequency dict for the given text
+    :param text: Text to process
+    :return: Frequency dict: letter->number of occur.
+    '''
     stats = {c:0 for c in string.ascii_lowercase}
- 
     for c in text:
         if c in stats:
             stats[c] += 1
     return stats
 
 #------------------------------------------------------------
-def decode(text, decode_map):
-    decode_map_excpt = {
-        'h':'n',
-        'f':'y',
-        # 'k':'v',
-        # 'm':'w',
-        # 'c':'m',
-        # 'w':'c',
-        # 'z':'q',
-        # '{':'v'
-    }
-
+def decode(text, letters_map):
+    '''
+    Decrypts text using letters mapping
+    :param text: Text to decrypt
+    :param letters_map: Letters mapping
+    :return: Decrypted text
+    '''
     decoded = ""
+
     for c in text:
+        decoded_c = c
 
-        decd_ch = c
-        if c in decode_map:
-            decd_ch = decode_map[c]
+        if c in letters_map:
+            decoded_c = letters_map[c]
 
-        if decd_ch in decode_map_excpt:
-            decd_ch = decode_map_excpt[decd_ch]
+        if decoded_c in exceptions:
+            decoded_c = exceptions[decoded_c]
 
-        decoded += decd_ch
+        decoded += decoded_c
+
     return decoded
 
 #----------------------------------------------------------
-def save_decode_map(decode_map):
-    fd_out = open("key.map", "w")
-
-    for k, v in decode_map.items():
-        fd_out.write("{0}:{1}\n".format(k, v))
-    fd_out.close()
-
-#----------------------------------------------------------
 if __name__ == "__main__":
-    fd_in_ref = open(sys.argv[1])
-    fd_in     = open(sys.argv[2])
-    fd_out    = open(sys.argv[3], "w")
+    # command line arguments
+    filename_ref = sys.argv[1]
+    filename_enc = sys.argv[2]
+    filename_dec = sys.argv[3]
 
-    text      = fd_in.read().lower()
-    text_ref  = fd_in_ref.read().lower()
+    # calc letter frequency for normal text
+    # will be used as a reference frequency
+    with open(filename_ref) as f:
+        stats_ref = get_stats(f.read().lower())
 
-    stats     = get_stats(text)
-    stats_ref = get_stats(text_ref)
+    # calc letter frequency for encrypted text
+    with open(filename_enc) as f:
+        text    = f.read().lower()
+        stats   = get_stats(text)
 
-    decode_map = make_mapping(stats, stats_ref)
-    decoded    = decode(text, decode_map)
+    # map reference<->encrypted letters according to their frequencies
+    decode_map  = map_dicts_by_values(stats, stats_ref)
 
+    # decode text
+    decoded     = decode(text, decode_map)
     print(decoded)
 
-    fd_out.write(decoded)
-    fd_out.close()
+    # save decoded text
+    with open(filename_dec, "w") as f:
+        f.write(decoded)
 
-    save_decode_map(decode_map)
+    # save ref<->enc letters mapping
+    with open("key.map", "w") as f:
+        for k, v in decode_map.items():
+            f.write("{0}:{1}\n".format(k, exceptions.get(v, v)))
