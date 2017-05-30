@@ -1,6 +1,6 @@
 # Caesar cipher
 
-Demonstrates Python basics with the following examples. 
+Demonstrates Python basics with simple example of encrypting/decrypting using Caesar cipher (https://en.wikipedia.org/wiki/Caesar_cipher). 
 
 ### To collect letters frequency:
 ```
@@ -33,5 +33,3 @@ Example:
 ```
 python3 decrypt.py alice.txt hhgttg_enc.txt hhgttg_decr.txt
 ```
-Links:
-https://en.wikipedia.org/wiki/Caesar_cipher
