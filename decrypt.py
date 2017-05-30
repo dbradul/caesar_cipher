@@ -1,5 +1,6 @@
-import string
 import sys
+from string import ascii_lowercase
+from functools import reduce
 
 #------------------------------------------------------------
 # Manually supported dict. for improper recognized symbols
@@ -34,34 +35,30 @@ def get_stats(text):
     :param text: Text to process
     :return: Frequency dict: letter->number of occur.
     '''
-    stats = {c:0 for c in string.ascii_lowercase}
-    for c in text:
-        if c in stats:
-            stats[c] += 1
+
+    stats = {}
+
+    _ = [stats.__setitem__(c, stats.get(c, 0)+1)
+                    for c in text if c in ascii_lowercase]
+
     return stats
 
 #------------------------------------------------------------
-def decode(text, letters_map):
+def decode(text, matches):
     '''
     Decrypts text using letters mapping
     :param text: Text to decrypt
     :param letters_map: Letters mapping
     :return: Decrypted text
     '''
-    decoded = ""
+    pipeline = [matches, exceptions]
 
-    for c in text:
-        decoded_c = c
+    decoded = map(lambda c: reduce(lambda c, p: p.get(c, c), pipeline, c), text)
 
-        if c in letters_map:
-            decoded_c = letters_map[c]
+    result = "".join(list(decoded))
 
-        if decoded_c in exceptions:
-            decoded_c = exceptions[decoded_c]
+    return result
 
-        decoded += decoded_c
-
-    return decoded
 
 #----------------------------------------------------------
 if __name__ == "__main__":
@@ -85,6 +82,7 @@ if __name__ == "__main__":
 
     # decode text
     decoded     = decode(text, decode_map)
+
     print(decoded)
 
     # save decoded text
