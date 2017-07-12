@@ -23,7 +23,7 @@ def encrypt_text(text, key):
 
     return encrypted
 
-#------------------------------------------------------------
+#-------------------------------------------------------------
 if __name__ == "__main__":
     # command line arguments
     filename_original = sys.argv[1]
